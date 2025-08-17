@@ -8,19 +8,19 @@ def grid_prediction(my_model, pH, aw, temp, model_type = 1):
 
     bw = np.sqrt(1 - aw)
     # Create a grid of all combinations
-    A, B, C = np.meshgrid(temp, pH, bw)
+    A, B, C = np.meshgrid(temp, pH, aw)
     newX = np.column_stack([A.ravel(), B.ravel(), C.ravel()])
 
-    newX = pd.DataFrame(newX, columns = ["Temperatura", "pH", "Bw"])
+    newX = pd.DataFrame(newX, columns = ["Temperatura", "pH", "Aw"])
 
     ## Add higher order terms if needed
     if model_type == 2:
         newX["T2"] = newX["Temperatura"]**2
         newX["pH2"] = newX["pH"] ** 2
-        newX["Bw2"] = newX["Bw"] ** 2
+        newX["Aw2"] = newX["Aw"] ** 2
         newX["TxpH"] = newX["Temperatura"] * newX["pH"]
-        newX["TxBw"] = newX["Temperatura"] * newX["Bw"]
-        newX["pHxBw"] = newX["pH"] * newX["Bw"]
+        newX["TxAw"] = newX["Temperatura"] * newX["Aw"]
+        newX["pHxAw"] = newX["pH"] * newX["Aw"]
 
     ## Make prediction
 
@@ -41,7 +41,7 @@ def predict_and_export(out_path, my_model, pH, aw, temp, model_type = 1):
 def main():
     ## List the files
 
-    files = os.listdir("out/models")
+    files = os.listdir("../models_datos_Alberto")
 
     ## Load the pickled models
 
@@ -49,7 +49,7 @@ def main():
 
     for each_file in files:
 
-        inpath = os.path.join("out/models/", each_file)
+        inpath = os.path.join("../models_datos_Alberto", each_file)
 
         with open(inpath, 'rb') as infile:
             models[each_file] = pickle.load(infile)
