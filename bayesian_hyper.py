@@ -1,5 +1,4 @@
 
-
 from skopt import BayesSearchCV
 from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score
 from sklearn.svm import SVC
@@ -30,7 +29,7 @@ def import_data():
     df_all = pd.concat([df_train,df_validation])
 
     Y = df_all['Crec'].values
-    df_all = df_all.drop("Crec", axis = 1)
+    df_all = df_all.drop(["Temperatura.1", "pH.1", "Aw.1", "Crec", "Pest"], axis = 1)
 
     return df_all, Y
 
@@ -592,7 +591,7 @@ def fit_toxic(X_train, y_train, X_test, y_test,
 
 ## Main functions ------------------------------------------------------------------------------------------------------
 
-def main(first_order=False):
+def main(first_order=True):
 
     ## Import and split the data
 
@@ -711,7 +710,7 @@ def main(first_order=False):
     fit_SVM_linear(X_train, y_train, X_test, y_test,
                    export_model="../models_datos_Alberto/SVMlin_second.p",
                    export_indices="out/errors/SVMlin_second.csv",
-                   niter=2,
+                   niter=20,
                    cv=5
                    )
 
@@ -729,7 +728,7 @@ def main(first_order=False):
     fit_lightgbmc(X_train, y_train, X_test, y_test,
                   export_model="../models_datos_Alberto/LGBM_second.p",
                   export_indices="out/errors/LGBM_second.csv",
-                  niter=2,
+                  niter=20,
                   cv=5
                   )
 
@@ -738,7 +737,7 @@ def main(first_order=False):
     fit_multinomialNB(X_train, y_train, X_test, y_test,
                       export_model="../models_datos_Alberto/MNB_second.p",
                       export_indices="out/errors/MNB_second.csv",
-                      niter=2,
+                      niter=20,
                       cv=5
                       )
 
@@ -747,7 +746,7 @@ def main(first_order=False):
     fit_perceptron(X_train, y_train, X_test, y_test,
                    export_model="../models_datos_Alberto/perceptron_second.p",
                    export_indices="out/errors/perceptron_second.csv",
-                   niter=2,
+                   niter=20,
                    cv=5
                    )
 
@@ -756,7 +755,7 @@ def main(first_order=False):
     fit_SGD(X_train, y_train, X_test, y_test,
             export_model="../models_datos_Alberto/SGD_second.p",
             export_indices="out/errors/SGD_second.csv",
-            niter=2,
+            niter=20,
             cv=5
             )
     '''
@@ -776,7 +775,7 @@ def main(first_order=False):
     fit_XGB(X_train, y_train, X_test, y_test,
             export_model="../models_datos_Alberto/XGB_second.p",
             export_indices="out/errors/XGB_second.csv",
-            niter=2,
+            niter=20,
             cv=5
             )
 
@@ -785,7 +784,7 @@ def main(first_order=False):
     fit_XGBRFC(X_train, y_train, X_test, y_test,
                export_model="../models_datos_Alberto/XGBRFC_second.p",
                export_indices="out/errors/XGBRFC_second.csv",
-               niter=2,
+               niter=20,
                cv=5
                )
 
@@ -793,7 +792,7 @@ def main(first_order=False):
     fit_toxic(X_train, y_train, X_test, y_test,
               export_model="../models_datos_Alberto/PassAg_second.p",
               export_indices="out/errors/PassAg_second.csv",
-              niter=2,
+              niter=20,
               cv=5
               )
 
@@ -801,7 +800,7 @@ def main(first_order=False):
     fit_SVM_rbf(X_train, y_train, X_test, y_test,
                 export_model="../models_datos_Alberto/SVMrbf_second.p",
                 export_indices="out/errors/SVMrbf_second.csv",
-                niter=2,
+                niter=20,
                 cv=5
                 )
 
