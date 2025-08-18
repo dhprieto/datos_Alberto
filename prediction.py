@@ -59,6 +59,7 @@ def main():
     ## List the files
 
     files = os.listdir("../models_datos_Alberto")
+    files = os.listdir("../models_datos_Alberto")
 
     ## Load the pickled models
 
@@ -66,6 +67,7 @@ def main():
 
     for each_file in files:
 
+        inpath = os.path.join("../models_datos_Alberto", each_file)
         inpath = os.path.join("../models_datos_Alberto", each_file)
 
         with open(inpath, 'rb') as infile:
