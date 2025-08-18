@@ -3,6 +3,8 @@ library(tidyverse)
 
 ## Error indices
 
+# setwd("~/Documentos/repositories/datos_Alberto")
+
 list.files("./out/errors") %>%
   set_names(., .) %>%
   map(., ~ paste0("./out/errors/", .)) %>%
@@ -24,9 +26,7 @@ list.files("./out/errors") %>%
 aa <- list.files("./out/predictions") %>%
   set_names(., .) %>%
   map(., ~ paste0("./out/predictions/", .)) %>%
-  map(., 
-      ~ read_csv(.) %>%  mutate(., Aw = 1 - Bw^2)
-  ) %>%
+  map(., ~ read_csv(.)) %>%  #mutate(., Aw = 1 - Bw^2)) %>%
   map(.,
       ~ filter(., abs(.94-Aw) < .01) 
       ) %>%
@@ -40,7 +40,7 @@ aa <- list.files("./out/predictions") %>%
 cowplot::plot_grid(plotlist = aa[1:12]) 
 cowplot::plot_grid(plotlist = aa[13:20])
 
-##
+## no ejecutado
 
 bind_rows(read_tsv("./data/d1.csv"),
           read_tsv("./data/d2.csv")) %>%
