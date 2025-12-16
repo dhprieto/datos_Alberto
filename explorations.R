@@ -1,13 +1,12 @@
-
 library(tidyverse)
 
 ## Error indices
 
-# setwd("~/Documentos/repositories/datos_Alberto")
+setwd("~/Documentos/repositories/datos_Alberto")
 
-list.files("./out/errors") %>%
+list.files("./out/errors/partial_fit_1/") %>%
   set_names(., .) %>%
-  map(., ~ paste0("./out/errors/", .)) %>%
+  map(., ~ paste0("./out/errors/partial_fit_1/", .)) %>%
   map(., ~ read_csv(.)) %>%
   imap_dfr(., ~ mutate(.x, cond = .y)) %>%
   separate(cond, into = c("model", "order"), sep = "_") %>%
@@ -17,15 +16,15 @@ list.files("./out/errors") %>%
   ggplot(aes(x = model, y = AUC, fill = type, colour = type)) +
   geom_col(position = "dodge") +
   geom_errorbar(aes(ymin = AUC-s, ymax = AUC+s), position = position_dodge()) +
-  facet_wrap("order") +
+  facet_wrap("order") + ggtitle("Errors after hyperparameter tuning")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
 
 ## 
 
-aa <- list.files("./out/predictions") %>%
+aa <- list.files("./out/predictions/partial_fit/") %>%
   set_names(., .) %>%
-  map(., ~ paste0("./out/predictions/", .)) %>%
+  map(., ~ paste0("./out/predictions/partial_fit/", .)) %>%
   map(., ~ read_csv(.)) %>%  #mutate(., Aw = 1 - Bw^2)) %>%
   map(.,
       ~ filter(., abs(.94-Aw) < .01) 
@@ -37,8 +36,38 @@ aa <- list.files("./out/predictions") %>%
         theme(legend.position = "none")
       ) 
   
-cowplot::plot_grid(plotlist = aa[1:12]) 
-cowplot::plot_grid(plotlist = aa[13:20])
+title_1 <- cowplot::ggdraw() + 
+  cowplot::draw_label(
+    "Decision boundaries hyperparameters tuned I",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+
+title_2 <- cowplot::ggdraw() + 
+  cowplot::draw_label(
+    "Decision boundaries hyperparameters tuned II",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+
+plot_1 <- cowplot::plot_grid(plotlist = aa[1:12])
+cowplot::plot_grid(title_1, plot_1, ncol = 1, rel_heights = c(0.1,1))
+
+plot_2 <- cowplot::plot_grid(plotlist = aa[13:20])
+cowplot::plot_grid(title_2, plot_2, ncol = 1, rel_heights = c(0.1,1))
+
 
 ## no ejecutado
 

@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import pandas as pd
 
-def grid_prediction(my_model, pH, aw, temp, model_type = 1):
+def grid_prediction(my_model, pH, aw, temp, scaler, model_type = 1):
 
 
     if model_type == 1:
@@ -41,15 +41,16 @@ def grid_prediction(my_model, pH, aw, temp, model_type = 1):
 
     ## Make prediction
 
-    newY = my_model.predict(newX)
+    newScaledX = scaler.transform(newX)
+    newY = my_model.predict(newScaledX)
 
     ## Return
     newX["pred"] = newY
 
     return newX
 
-def predict_and_export(out_path, my_model, pH, bw, temp, model_type = 1):
-    pred = grid_prediction(my_model, pH, bw, temp, model_type)
+def predict_and_export(out_path, my_model, pH, bw, temp, scaler, model_type = 1):
+    pred = grid_prediction(my_model, pH, bw, temp, scaler, model_type)
 
     with open(out_path,'w') as fout:
         pred.to_csv(fout, index = False, lineterminator='\n')
