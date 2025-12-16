@@ -51,7 +51,7 @@ def export_errors_indices(model, X_train, y_train, X_test, y_test, cv, out_path)
 
     y_pred = model.predict(X_test)
     test_score = roc_auc_score(y_test, y_pred)
-
+    
     out = pd.DataFrame()
     out["scores"] = np.append(train_scores, test_score)
     aa = ["train"] * cv
@@ -65,7 +65,7 @@ def export_errors_indices(model, X_train, y_train, X_test, y_test, cv, out_path)
 
 ## Prediction and export -----------------------------------------------------------------------------------------------
 
-def grid_prediction(my_model, pH, aw, temp, model_type = 1):
+def grid_prediction(my_model, pH, aw, temp, scaler, model_type = 1, ):
 
     bw = np.sqrt(1 - aw)
     # Create a grid of all combinations
@@ -84,7 +84,7 @@ def grid_prediction(my_model, pH, aw, temp, model_type = 1):
         newX["pHxBw"] = newX["pH"] * newX["Bw"]
 
     ## Make prediction
-
+    newScaledX = scaler
     newY = my_model.best_estimator_.predict(newX)
 
     ## Return
