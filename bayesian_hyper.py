@@ -1,5 +1,4 @@
 
-
 from skopt import BayesSearchCV
 from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score
 from sklearn.svm import SVC
@@ -30,7 +29,7 @@ def import_data():
     df_all = pd.concat([df_train,df_validation])
 
     Y = df_all['Crec'].values
-    df_all = df_all.drop("Crec", axis = 1)
+    df_all = df_all.drop(["Temperatura.1", "pH.1", "Aw.1", "Crec", "Pest"], axis = 1)
 
     return df_all, Y
 
@@ -52,7 +51,7 @@ def export_errors_indices(model, X_train, y_train, X_test, y_test, cv, out_path)
 
     y_pred = model.predict(X_test)
     test_score = roc_auc_score(y_test, y_pred)
-
+    
     out = pd.DataFrame()
     out["scores"] = np.append(train_scores, test_score)
     aa = ["train"] * cv
@@ -66,7 +65,7 @@ def export_errors_indices(model, X_train, y_train, X_test, y_test, cv, out_path)
 
 ## Prediction and export -----------------------------------------------------------------------------------------------
 
-def grid_prediction(my_model, pH, aw, temp, model_type = 1):
+def grid_prediction(my_model, pH, aw, temp, scaler, model_type = 1, ):
 
     bw = np.sqrt(1 - aw)
     # Create a grid of all combinations
@@ -85,7 +84,7 @@ def grid_prediction(my_model, pH, aw, temp, model_type = 1):
         newX["pHxBw"] = newX["pH"] * newX["Bw"]
 
     ## Make prediction
-
+    newScaledX = scaler
     newY = my_model.best_estimator_.predict(newX)
 
     ## Return
@@ -592,7 +591,7 @@ def fit_toxic(X_train, y_train, X_test, y_test,
 
 ## Main functions ------------------------------------------------------------------------------------------------------
 
-def main():
+def main(first_order=True):
 
     ## Import and split the data
 
@@ -602,104 +601,105 @@ def main():
 
     ## Fit first order models
 
-    print("FITTING FIRST ORDER")
-    
-    print("SVM linear")
+    if first_order == True:
+        print("FITTING FIRST ORDER")
+        
+        print("SVM linear")
 
-    fit_SVM_linear(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/SVMlin_first.p",
-                export_indices = "out/errors/SVMlin_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_SVM_linear(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/SVMlin_first.p",
+                    export_indices = "out/errors/SVMlin_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("RF")
+        print("RF")
 
-    fit_RF(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/RF_first.p",
-                export_indices = "out/errors/RF_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_RF(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/RF_first.p",
+                    export_indices = "out/errors/RF_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("LGBM")
+        print("LGBM")
 
-    fit_lightgbmc(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/LGBM_first.p",
-                export_indices = "out/errors/LGBM_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_lightgbmc(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/LGBM_first.p",
+                    export_indices = "out/errors/LGBM_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("Multinomial NB")
+        print("Multinomial NB")
 
-    fit_multinomialNB(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/MNB_first.p",
-                export_indices = "out/errors/MNB_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_multinomialNB(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/MNB_first.p",
+                    export_indices = "out/errors/MNB_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("Perceptron")
+        print("Perceptron")
 
-    fit_perceptron(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/perceptron_first.p",
-                export_indices = "out/errors/perceptron_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_perceptron(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/perceptron_first.p",
+                    export_indices = "out/errors/perceptron_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("SGD")
+        print("SGD")
 
-    fit_SGD(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/SGD_first.p",
-                export_indices = "out/errors/SGD_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_SGD(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/SGD_first.p",
+                    export_indices = "out/errors/SGD_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("MLP")
-    '''
-    fit_MLP(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/MLP_first.p",
-                export_indices = "out/errors/MLP_first.csv",
-                niter=20,
-                cv=5
-                )
-    '''
-    print("XGB")
+        print("MLP")
+        '''
+        fit_MLP(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/MLP_first.p",
+                    export_indices = "out/errors/MLP_first.csv",
+                    niter=20,
+                    cv=5
+                    )
+        '''
+        print("XGB")
 
-    fit_XGB(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/XGB_first.p",
-                export_indices = "out/errors/XGB_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_XGB(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/XGB_first.p",
+                    export_indices = "out/errors/XGB_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("XGBRFC")
+        print("XGBRFC")
 
-    fit_XGBRFC(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/XGBRFC_first.p",
-                export_indices = "out/errors/XGBRFC_first.csv",
-                niter=20,
-                cv=5
-                )
+        fit_XGBRFC(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/XGBRFC_first.p",
+                    export_indices = "out/errors/XGBRFC_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("Passive Agressive")
-    fit_toxic(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/PassAg_first.p",
-                export_indices = "out/errors/PassAg_first.csv",
-                niter=20,
-                cv=5
-                )
+        print("Passive Agressive")
+        fit_toxic(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/PassAg_first.p",
+                    export_indices = "out/errors/PassAg_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
-    print("SVM with radial")
-    fit_SVM_rbf(X_train_1, y_train, X_test_1, y_test,
-                export_model = "../models_datos_Alberto/SVMrbf_first.p",
-                export_indices = "out/errors/SVMrbf_first.csv",
-                niter=20,
-                cv=5
-                )
+        print("SVM with radial")
+        fit_SVM_rbf(X_train_1, y_train, X_test_1, y_test,
+                    export_model = "../models_datos_Alberto/SVMrbf_first.p",
+                    export_indices = "out/errors/SVMrbf_first.csv",
+                    niter=20,
+                    cv=5
+                    )
 
     ## Fit second order models
 
@@ -719,7 +719,7 @@ def main():
     fit_RF(X_train, y_train, X_test, y_test,
            export_model="../models_datos_Alberto/RF_second.p",
            export_indices="out/errors/RF_second.csv",
-           niter=20,
+           niter=2,
            cv=5
            )
 
@@ -765,7 +765,7 @@ def main():
     fit_MLP(X_train, y_train, X_test, y_test,
             export_model="../models_datos_Alberto/MLP_second.p",
             export_indices="out/errors/MLP_second.csv",
-            niter=20,
+            niter=2,
             cv=5
             )
     '''
