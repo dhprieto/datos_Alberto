@@ -73,6 +73,14 @@ X_new = df_train.drop(["Crec", "Muestra"], axis = 1)
 # array(['Temperatura', 'pH', 'Aw', 'Bw', 'T2', 'pH2', 'Aw2', 'Bw2', 'TxpH', 'TxAw', 'pHxAw', 'TxBw', 'pHxBw'], dtype=object)
 # X_1 = X.iloc[:,[0,1,2]]
 
+new_SGD = list_models["SGD_second.p"].named_steps["SGD"].partial_fit(X_new, 1-Y_new)
+print(new_SGD)
+new_perceptron = list_models["perceptron_second.p"].named_steps["PR"].partial_fit(X_new, 1-Y_new)
+print(new_perceptron)
+new_PassAg = list_models["PassAg_second.p"].named_steps["toxic"].partial_fit(X_new, 1-Y_new)
+print(new_PassAg)
+
+
 def split_transform(X, y, test_size = 0.3):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
